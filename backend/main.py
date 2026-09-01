@@ -18,6 +18,8 @@ app.add_middleware(
 # Mount backend API routers
 app.include_router(forecast.router, prefix="/api/v1/forecast", tags=["Forecast"])
 app.include_router(inventory.router, prefix="/api/v1/inventory", tags=["Inventory"])
+# In backend/main.py
+app.include_router(forecast.router, prefix="/api/v1/forecast")
 
 # Serve Frontend Dashboard
 if os.path.exists("frontend"):
