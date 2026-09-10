@@ -1,15 +1,24 @@
-import mysql.connector
-from mysql.connector import pooling
-from backend.core.config import settings
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
+from backend.core.config import DATABASE_URL
+
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True
+)
+
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
+
+Base = declarative_base()
+
 
 def get_db():
-    connection = mysql.connector.connect(
-        host=settings.DB_HOST,
-        user=settings.DB_USER,
-        password=settings.DB_PASSWORD,
-        database=settings.DB_NAME
-    )
+    db = SessionLocal()
     try:
-        yield connection
+        yield db
     finally:
-        connection.close()
+        db.close()

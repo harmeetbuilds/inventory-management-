@@ -8,9 +8,6 @@ import joblib
 from database import get_connection
 
 
-# ==========================================
-# 1. LOAD DATA FROM MYSQL
-# ==========================================
 
 connection = get_connection()
 
@@ -31,9 +28,7 @@ print("Data loaded successfully!")
 print("Rows:", len(df))
 
 
-# ==========================================
-# 2. PREPARE DATA
-# ==========================================
+
 
 df["sale_date"] = pd.to_datetime(df["sale_date"])
 
@@ -42,19 +37,12 @@ df = df.sort_values(
 ).reset_index(drop=True)
 
 
-# ==========================================
-# 3. CREATE TIME FEATURES
-# ==========================================
 
 df["day_of_week"] = df["sale_date"].dt.dayofweek
 df["day_of_month"] = df["sale_date"].dt.day
 df["month"] = df["sale_date"].dt.month
 df["week_of_year"] = df["sale_date"].dt.isocalendar().week.astype(int)
 
-
-# ==========================================
-# 4. CREATE LAG FEATURES
-# ==========================================
 
 df["lag_1"] = (
     df.groupby("product_id")["quantity_sold"]
@@ -72,9 +60,6 @@ df["lag_14"] = (
 )
 
 
-# ==========================================
-# 5. CREATE ROLLING FEATURES
-# ==========================================
 
 df["rolling_7"] = (
     df.groupby("product_id")["quantity_sold"]
@@ -91,13 +76,10 @@ df["rolling_14"] = (
 )
 
 
-# Remove rows where features aren't available
+
 df = df.dropna().reset_index(drop=True)
 
 
-# ==========================================
-# 6. DEFINE FEATURES AND TARGET
-# ==========================================
 
 features = [
     "product_id",
@@ -116,9 +98,6 @@ X = df[features]
 
 y = df["quantity_sold"]
 
-# ==========================================
-# 7. TIME-BASED TRAIN / TEST SPLIT
-# ==========================================
 
 train_parts = []
 test_parts = []
@@ -155,9 +134,7 @@ print("Training rows:", len(X_train))
 print("Testing rows:", len(X_test))
 
 
-# ==========================================
-# 8. TRAIN RANDOM FOREST
-# ==========================================
+
 
 model = RandomForestRegressor(
     n_estimators=200,
@@ -168,19 +145,14 @@ model = RandomForestRegressor(
 model.fit(X_train, y_train)
 
 
-# ==========================================
-# 9. MAKE PREDICTIONS
-# ==========================================
+
 
 predictions = model.predict(X_test)
 
-# Demand cannot be negative
 predictions = np.maximum(predictions, 0)
 
 
-# ==========================================
-# 10. EVALUATE MODEL
-# ==========================================
+
 
 mae = mean_absolute_error(
     y_test,
@@ -204,9 +176,6 @@ print("MAE :", round(mae, 2))
 print("RMSE:", round(rmse, 2))
 
 
-# ==========================================
-# 11. SHOW SOME PREDICTIONS
-# ==========================================
 
 results = pd.DataFrame({
     "Actual": y_test.values,
@@ -218,9 +187,7 @@ print("Sample predictions:")
 print(results.head(10))
 
 
-# ==========================================
-# 12. SAVE MODEL
-# ==========================================
+
 
 model_path = "ml/model/demand_model.pkl"
 

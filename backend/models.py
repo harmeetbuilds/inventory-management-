@@ -1,12 +1,27 @@
-from sqlalchemy import Column, Float, Integer, String
-from backend.database import Base
+from sqlalchemy import Column, Integer, String, Numeric, DateTime
+from backend.core.database import Base
 
 
 class Product(Base):
     __tablename__ = "products"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    stock_quantity = Column(Integer, default=0)
-    safety_stock = Column(Integer, default=10)
-    price = Column(Float, default=0.0)
+    product_id = Column(Integer, primary_key=True, index=True)
+    sku = Column(String(50), unique=True, nullable=False)
+    name = Column(String(150), nullable=False)
+
+    category_id = Column(Integer, nullable=True)
+    supplier_id = Column(Integer, nullable=True)
+
+    unit = Column(String(30), nullable=False, default="unit")
+
+    cost_price = Column(Numeric(12, 2), nullable=False, default=0.00)
+    selling_price = Column(Numeric(12, 2), nullable=False, default=0.00)
+
+    current_stock = Column(Integer, nullable=False, default=0)
+    reorder_level = Column(Integer, nullable=False, default=0)
+    safety_stock = Column(Integer, nullable=False, default=0)
+
+    is_active = Column(Integer, nullable=False, default=1)
+
+    created_at = Column(DateTime)
+    updated_at = Column(DateTime)

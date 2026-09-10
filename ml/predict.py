@@ -5,9 +5,7 @@ from datetime import timedelta
 from database import get_connection
 
 
-# ==========================================
-# 1. LOAD TRAINED MODEL
-# ==========================================
+
 
 model = joblib.load("ml/model/demand_model.pkl")
 
@@ -26,9 +24,6 @@ features = [
 ]
 
 
-# ==========================================
-# 2. LOAD SALES DATA FROM MYSQL
-# ==========================================
 
 connection = get_connection()
 
@@ -48,9 +43,7 @@ connection.close()
 df["sale_date"] = pd.to_datetime(df["sale_date"])
 
 
-# ==========================================
-# 3. ASK FOR PRODUCT ID
-# ==========================================
+
 
 product_id = int(input("Enter Product ID: "))
 
@@ -62,27 +55,19 @@ product_data = df[
 product_data = product_data.sort_values("sale_date")
 
 
-# ==========================================
-# 4. CHECK DATA
-# ==========================================
+
 
 if len(product_data) < 14:
     print("Not enough sales history for this product.")
     exit()
 
 
-# ==========================================
-# 5. PREPARE HISTORY
-# ==========================================
 
 history = product_data["quantity_sold"].tolist()
 
 last_date = product_data["sale_date"].max()
 
 
-# ==========================================
-# 6. PREDICT NEXT 7 DAYS
-# ==========================================
 
 future_predictions = []
 
@@ -125,9 +110,6 @@ for i in range(1, 8):
     history.append(prediction)
 
 
-# ==========================================
-# 7. DISPLAY FORECAST
-# ==========================================
 
 print()
 print("==============================")

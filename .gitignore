@@ -1,4 +1,4 @@
-# Environment variables (Database credentials)
+# Environment variables
 .env
 *.env
 
@@ -15,3 +15,7 @@ env/
 # Build files
 dist/
 build/
+
+# Database
+*.db
+database/
